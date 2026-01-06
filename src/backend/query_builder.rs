@@ -623,12 +623,27 @@ pub trait QueryBuilder:
                 sql.write_str(" AS ").unwrap();
                 self.prepare_iden(alias, sql);
             }
-            TableRef::ValuesList(values, alias) => {
+            TableRef::ValuesList(values, alias, columns) => {
                 sql.write_str("(").unwrap();
                 self.prepare_values_list(values, sql);
                 sql.write_str(")").unwrap();
                 sql.write_str(" AS ").unwrap();
                 self.prepare_iden(alias, sql);
+                if let Some(columns) = columns {
+                    sql.write_str("(").unwrap();
+                    let mut columns_iter = columns.iter();
+                    join_io!(
+                        columns_iter,
+                        column,
+                        join {
+                            sql.write_str(", ").unwrap();
+                        },
+                        do {
+                            self.prepare_iden(column, sql);
+                        }
+                    );
+                    sql.write_str(")").unwrap();
+                }
             }
             TableRef::FunctionCall(func, alias) => {
                 self.prepare_function_name(&func.func, sql);

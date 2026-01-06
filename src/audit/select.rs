@@ -86,7 +86,7 @@ impl Walker {
                     schema_table: table_name.clone(),
                 });
             }
-            TableRef::ValuesList(_, _) => (),
+            TableRef::ValuesList(_, _, _) => (),
         }
         Ok(())
     }

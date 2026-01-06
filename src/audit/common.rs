@@ -6,6 +6,6 @@ pub(super) fn parse_audit_table(table_ref: &TableRef) -> Option<TableName> {
         TableRef::SubQuery(_, _) => None,
         TableRef::FunctionCall(_, _) => None,
         TableRef::Table(tbl, _) => Some(tbl.clone()),
-        TableRef::ValuesList(_, _) => None,
+        TableRef::ValuesList(_, _, _) => None,
     }
 }

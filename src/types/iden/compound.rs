@@ -194,7 +194,7 @@ pub enum TableRef {
     /// Subquery with alias
     SubQuery(Box<SelectStatement>, DynIden),
     /// Values list with alias
-    ValuesList(Vec<ValueTuple>, DynIden),
+    ValuesList(Vec<ValueTuple>, DynIden, Option<Vec<DynIden>>),
     /// Function call with alias
     FunctionCall(FunctionCall, DynIden),
 }
@@ -208,7 +208,7 @@ impl TableRef {
         match self {
             Self::Table(table, _) => Self::Table(table, Some(alias.into_iden())),
             Self::SubQuery(statement, _) => Self::SubQuery(statement, alias.into_iden()),
-            Self::ValuesList(values, _) => Self::ValuesList(values, alias.into_iden()),
+            Self::ValuesList(values, _, columns) => Self::ValuesList(values, alias.into_iden(), columns),
             Self::FunctionCall(func, _) => Self::FunctionCall(func, alias.into_iden()),
         }
     }
@@ -218,7 +218,7 @@ impl TableRef {
         match self {
             TableRef::Table(TableName(_, tbl), _)
             | TableRef::SubQuery(_, tbl)
-            | TableRef::ValuesList(_, tbl)
+            | TableRef::ValuesList(_, tbl, _)
             | TableRef::FunctionCall(_, tbl) => tbl,
         }
     }
@@ -226,7 +226,7 @@ impl TableRef {
     #[doc(hidden)]
     pub fn sea_orm_table_alias(&self) -> Option<&DynIden> {
         match self {
-            TableRef::Table(_, None) | TableRef::SubQuery(_, _) | TableRef::ValuesList(_, _) => {
+            TableRef::Table(_, None) | TableRef::SubQuery(_, _) | TableRef::ValuesList(_, _, _) => {
                 None
             }
             TableRef::Table(_, Some(alias)) | TableRef::FunctionCall(_, alias) => Some(alias),

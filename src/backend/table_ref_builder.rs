@@ -6,7 +6,7 @@ pub trait TableRefBuilder: QuotedBuilder {
         let (table_name, alias) = match table_ref {
             TableRef::Table(table_name, alias) => (table_name, alias),
             TableRef::SubQuery(_, _)
-            | TableRef::ValuesList(_, _)
+            | TableRef::ValuesList(_, _, _)
             | TableRef::FunctionCall(_, _) => panic!("TableRef with values is not support"),
         };
         self.prepare_table_name(table_name, sql);

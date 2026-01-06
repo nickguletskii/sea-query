@@ -77,7 +77,7 @@ mod index_hint {
             match value {
                 TableRef::Table(table_name, alias) => Self::Table(table_name, alias),
                 TableRef::SubQuery(_, alias)
-                | TableRef::ValuesList(_, alias)
+                | TableRef::ValuesList(_, alias , _)
                 | TableRef::FunctionCall(_, alias) => Self::Alias(alias),
             }
         }
@@ -90,7 +90,7 @@ mod index_hint {
                     Self::Table(table_name.clone(), alias.clone())
                 }
                 TableRef::SubQuery(_, alias)
-                | TableRef::ValuesList(_, alias)
+                | TableRef::ValuesList(_, alias, _)
                 | TableRef::FunctionCall(_, alias) => Self::Alias(alias.clone()),
             }
         }
@@ -105,7 +105,7 @@ mod index_hint {
                 (
                     Self::Alias(alias),
                     TableRef::SubQuery(_, alias2)
-                    | TableRef::ValuesList(_, alias2)
+                    | TableRef::ValuesList(_, alias2, _)
                     | TableRef::FunctionCall(_, alias2),
                 ) => alias == alias2,
                 _ => false,
@@ -988,7 +988,7 @@ impl SelectStatement {
             .map(|vt| vt.into_value_tuple())
             .collect();
         assert!(!value_tuples.is_empty());
-        self.from_from(TableRef::ValuesList(value_tuples, alias.into_iden()))
+        self.from_from(TableRef::ValuesList(value_tuples, alias.into_iden(), None))
     }
 
     /// From table with alias.
